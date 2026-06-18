@@ -1,12 +1,13 @@
 "use client"
 import React from 'react'
+import Hero from '../_components/Hero'
 
-const page = () => {
+const Page = () => {
   return (
-    <div>
-      workspace
-    </div>
+    <main className='flex h-screen w-screen items-center justify-center'>
+      <Hero/>
+    </main>
   )
 }
 
-export default page
+export default Page
