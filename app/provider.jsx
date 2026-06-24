@@ -3,6 +3,7 @@ import React, { useEffect,useState } from 'react'
 import axios from 'axios'
 import { useUser } from '@clerk/nextjs'
 import {UserDetailContext} from '@/context/UserDetailContext'
+import { Toaster } from 'react-hot-toast'
 const Provider = ({ children }) => {
     const { user } = useUser();
     useEffect(() => {
@@ -18,6 +19,7 @@ const Provider = ({ children }) => {
     return (
         <div>
 <UserDetailContext.Provider value={{userDetail, setUserDetail}} >
+            <Toaster position="top-right" />
             {children}
 </UserDetailContext.Provider>
 

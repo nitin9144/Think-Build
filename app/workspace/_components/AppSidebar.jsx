@@ -13,17 +13,19 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar"
 import { Button } from '@/components/ui/button';
-
+import Link from 'next/link';
 export function AppSidebar() {
   // const [first, setfirst] = useState(second)
   const [projectlist, setprojectlist] = useState([])
   const { userDetail, setUserDetail } = useContext(UserDetailContext)
   return (
     <Sidebar>
-      <SidebarHeader />
+      <Link href="/">
+        <SidebarHeader />
       <div className='flex font-bold p-2'>
         <Image src="/logo.svg" alt="Logo" width={30} height={30} />
         <h2 className='text-2xl'>Think & Build</h2></div>
+      </Link>
       <Button className='font-bold'>+ Add New Project</Button>
       <SidebarContent>
         <SidebarGroup />

@@ -7,6 +7,12 @@ import { Button } from '@/components/ui/button'
 // import { SignInButton, useUser } from '@clerk/nextjs'
 import { SignIn, SignInButton, useUser, UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
+import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { useContext } from 'react';
+import { UserDetailContext } from '@/context/UserDetailContext';
+
 const Hero = () => {
     const suggestion = [
         {
@@ -38,7 +44,49 @@ const Hero = () => {
 
     //     if (isSignedIn) { router.push('/workspace') }
     // }
+    const [loading, setloading] = useState(false)
+    const router = useRouter();
+    const createnewproject = async () => {
+        if (!userinput.trim()) {
+            return;
+        }
 
+        if (!isSignedIn) {
+            toast.error('Please sign in to continue');
+            return;
+        }
+
+        setloading(true);
+        const projectId = uuidv4();
+        const frameId = String(generaterandomframenumber());
+        const chatMessage = [
+            {
+                role: 'user',
+                content: userinput,
+            }
+        ]
+        try {
+            const response = await fetch('/api/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ projectId, frameId, chatMessage })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to create project: ${response.status}`);
+            }
+
+            toast.success('Project created successfully');
+            await router.push(`/playground/${projectId}?frameId=${frameId}`);
+        } catch (err) {
+            toast.error('Internal Server Error');
+            console.error('Error creating project:', err);
+        } finally {
+            setloading(false);
+        }
+    }
     return (
         <div className='flex h-[80vh] justify-center'>
             <div className=' flex flex-col content-center justify-center '>
@@ -66,13 +114,17 @@ const Hero = () => {
                             <Image className='' src='/img.svg' alt='add' width={18} height={18} />
                         </Button>
                     </div>
-                    <Link href="/workspace">
-                        <SignInButton mode='modal' >
-                            <Button disabled={!userinput} variant='ghost' className='right-0.5 bottom-0.5 absolute'>
+                    {isSignedIn ? (
+                        <Button onClick={createnewproject} disabled={!userinput || loading} variant='ghost' className='right-0.5 bottom-0.5 absolute'>
+                            Start {loading ? <Image className='' animate='spin' src='/loading.svg' alt='loading' width={18} height={18} /> : <Image className='' src='/arrowup.svg' alt='add' width={18} height={18} />}
+                        </Button>
+                    ) : (
+                        <SignInButton mode='modal'>
+                            <Button disabled={!userinput || loading} variant='ghost' className='right-0.5 bottom-0.5 absolute'>
                                 Start <Image className='' src='/arrowup.svg' alt='add' width={18} height={18} />
                             </Button>
                         </SignInButton>
-                    </Link>
+                    )}
                 </div>
 
                 <div className='gap-1 flex justify-center mt-2'>
@@ -88,3 +140,8 @@ const Hero = () => {
 }
 
 export default Hero
+
+const generaterandomframenumber = () => {
+    const num = Math.floor(Math.random() * 1000);
+    return num;
+}

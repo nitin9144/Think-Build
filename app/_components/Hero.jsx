@@ -66,13 +66,19 @@ const Hero = () => {
                             <Image className='' src='/img.svg' alt='add' width={18} height={18} />
                         </Button>
                     </div>
-                    <Link href="/workspace">
-                        <SignInButton mode='modal' >
+                    {isSignedIn ? (
+                        <Link href="/workspace">
+                            <Button disabled={!userinput} variant='ghost' className='right-0.5 bottom-0.5 absolute'>
+                                Start <Image className='' src='/arrowup.svg' alt='add' width={18} height={18} />
+                            </Button>
+                        </Link>
+                    ) : (
+                        <SignInButton mode='modal'>
                             <Button disabled={!userinput} variant='ghost' className='right-0.5 bottom-0.5 absolute'>
                                 Start <Image className='' src='/arrowup.svg' alt='add' width={18} height={18} />
                             </Button>
                         </SignInButton>
-                    </Link>
+                    )}
                 </div>
 
                 <div className='gap-1 flex justify-center mt-2'>
